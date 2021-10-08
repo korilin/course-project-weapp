@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "my-csxy-life-weapp",
+  "description": "课程作业-我的城院生活-微信小程序",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
