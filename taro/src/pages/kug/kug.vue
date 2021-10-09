@@ -1,7 +1,6 @@
 <template>
-    <view class="kug">
-        <web-view v-if="isShowWebView" :src="webViewSrc" />
-
+    <web-view v-if="isShowWebView" :src="webViewSrc" />
+    <view v-else class="kug">
         <nut-cell-group :title="groupTitle">
             <nut-cell
                 title="访问深圳 Kotlin User Group 主页"
