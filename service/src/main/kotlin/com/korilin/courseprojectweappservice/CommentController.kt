@@ -17,5 +17,5 @@ class CommentController(val commentMapper: CommentMapper) {
     }
 
     @GetMapping("/all")
-    fun allComments() = commentMapper.getComments()
+    fun allComments() = commentMapper.getComments().sortedBy { -it.commentId }
 }

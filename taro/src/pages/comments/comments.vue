@@ -24,6 +24,11 @@
             <nut-button v-else type="info" @click="getUserInfo">
                 发表评论请先授权
             </nut-button>
+            <nut-toast
+                :msg="toast.msg"
+                v-model:visible="toast.show"
+                :type="toast.type"
+            />
         </view>
         <nut-divider style="margin: 15px 0">大家的留言</nut-divider>
         <view>
@@ -54,19 +59,14 @@
 import { reactive, toRefs } from "vue";
 import Taro from "@tarojs/taro";
 import moment from "moment";
-import Toast from "@nutui/nutui-taro";
 
 export default {
     name: "Comments",
+
     created() {
-        const that = this;
-        Taro.request({
-            url: "http://localhost:8080/comment/all",
-            success: function (res) {
-                that.comments = res.data;
-            },
-        });
+        this.getComments();
     },
+
     setup() {
         const emojis = [
             "ヾ(≧▽≦*)o",
@@ -94,6 +94,11 @@ export default {
             content: "",
             userInfo: null,
             comments: [],
+            toast: {
+                show: false,
+                type: "text",
+                msg: "(❁´◡`❁)",
+            },
         });
 
         const randomEmoji = () => {
@@ -105,6 +110,15 @@ export default {
                 desc: "用于发表评论",
                 success: (res) => {
                     state.userInfo = res.userInfo;
+                },
+            });
+        };
+
+        const getComments = () => {
+            Taro.request({
+                url: "http://localhost:8080/comment/all",
+                success: function (res) {
+                    state.comments = res.data;
                 },
             });
         };
@@ -121,10 +135,15 @@ export default {
                 data: data,
                 success: function (res) {
                     if (res.data) {
-                        Toast.success("评论成功");
                         state.content = "";
+                        state.toast.msg = "评论发表成功 (≧∇≦)ﾉ";
+                        state.toast.type = "success";
+                        state.toast.show = true;
+                        getComments();
                     } else {
-                        Toast.fail("评论失败？原因我也不知道为什么~");
+                        state.toast.msg = "评论失败？原因我也不知道为什么~";
+                        state.toast.type = "fail";
+                        state.toast.show = true;
                     }
                 },
             });
@@ -135,6 +154,7 @@ export default {
             moment,
             randomEmoji,
             getUserInfo,
+            getComments,
             sendComment,
         };
     },
