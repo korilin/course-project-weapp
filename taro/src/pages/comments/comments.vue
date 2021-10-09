@@ -1,19 +1,29 @@
 <template>
     <view class="comments">
-        <view>
-            <view style="font-size: 14px; margin-bottom: 10px">
-                发表你的评论：
-            </view>
-            <view style="text-align: center; width: 100%">
+        <view style="width: 100%; text-align: center">
+            <view v-if="userInfo != null">
+                <view class="user-wrap">
+                    <nut-avatar
+                        style="margin-right: 10px"
+                        size="40"
+                        :icon="userInfo.avatarUrl"
+                    />
+                    <view class="nick-name">{{ userInfo.nickName }}</view>
+                </view>
                 <nut-textarea
-                    v-if="isLogin"
-                    rows="2"
+                    rows="1"
+                    style="margin-bottom: 20px"
                     limit-show
                     max-length="200"
                     v-model="content"
                 />
-                <nut-button v-else type="info">请先登录</nut-button>
+                <nut-button type="success" style="z-index" @click="sendComment">
+                    发表评论
+                </nut-button>
             </view>
+            <nut-button v-else type="info" @click="getUserInfo">
+                发表评论请先授权
+            </nut-button>
         </view>
         <nut-divider style="margin: 15px 0">大家的留言</nut-divider>
         <view>
@@ -25,7 +35,7 @@
                     <view class="content">
                         <view class="nick-name">{{ comment.nickName }}</view>
                         <view class="time">{{
-                            moment(comment.timestamp).format(
+                            moment(comment.timestamp * 1000).format(
                                 "YYYY/MM/DD HH:mm:ss"
                             )
                         }}</view>
@@ -33,7 +43,7 @@
                     </view>
                 </view>
                 <nut-divider dashed>
-                    {{ i == comments.length - 1 ? "到底了" : "⚪" }}
+                    {{ i == comments.length - 1 ? "到底了" : randomEmoji() }}
                 </nut-divider>
             </view>
         </view>
@@ -44,34 +54,88 @@
 import { reactive, toRefs } from "vue";
 import Taro from "@tarojs/taro";
 import moment from "moment";
+import Toast from "@nutui/nutui-taro";
 
 export default {
     name: "Comments",
+    created() {
+        const that = this;
+        Taro.request({
+            url: "http://localhost:8080/comment/all",
+            success: function (res) {
+                that.comments = res.data;
+            },
+        });
+    },
     setup() {
+        const emojis = [
+            "ヾ(≧▽≦*)o",
+            "φ(*￣0￣)",
+            "q(≧▽≦q)",
+            "ψ(｀∇´)ψ",
+            "(～￣▽￣)～",
+            "( •̀ ω •́ )✧",
+            "φ(゜▽゜*)♪",
+            "o(*^＠^*)o",
+            "(✿◡‿◡)",
+            "(*^▽^*)",
+            "(❁´◡`❁)",
+            "(≧∇≦)ﾉ",
+            "(●ˇ∀ˇ●)",
+            "╰(*°▽°*)╯",
+            "(●'◡'●)",
+            "(o゜▽゜)o☆",
+            "(oﾟvﾟ)ノ",
+            "(≧∀≦)ゞ",
+            "o(*^▽^*)┛",
+            "( •̀ ω •́ )y",
+        ];
         const state = reactive({
             content: "",
-            isLogin: false,
-            comments: [
-                {
-                    commentId: 0,
-                    nickName: "kori",
-                    avatarUrl: "https://korilin.com/korilin.png",
-                    content: "你好呀",
-                    timestamp: 1633788029,
-                },
-                {
-                    commentId: 1,
-                    nickName: "kori",
-                    avatarUrl: "https://korilin.com/korilin.png",
-                    content: "你好呀",
-                    timestamp: 1633788029,
-                },
-            ],
+            userInfo: null,
+            comments: [],
         });
+
+        const randomEmoji = () => {
+            return emojis[Math.round(Math.random() * (emojis.length - 1))];
+        };
+
+        const getUserInfo = () => {
+            Taro.getUserProfile({
+                desc: "用于发表评论",
+                success: (res) => {
+                    state.userInfo = res.userInfo;
+                },
+            });
+        };
+
+        const sendComment = () => {
+            const data = {
+                nickName: state.userInfo.nickName,
+                avatarUrl: state.userInfo.avatarUrl,
+                content: state.content,
+            };
+            Taro.request({
+                url: "http://localhost:8080/comment/new",
+                method: "POST",
+                data: data,
+                success: function (res) {
+                    if (res.data) {
+                        Toast.success("评论成功");
+                        state.content = "";
+                    } else {
+                        Toast.fail("评论失败？原因我也不知道为什么~");
+                    }
+                },
+            });
+        };
 
         return {
             ...toRefs(state),
             moment,
+            randomEmoji,
+            getUserInfo,
+            sendComment,
         };
     },
 };
@@ -79,16 +143,24 @@ export default {
 
 <style lang="scss">
 .comments {
-    font-family: "Avenir", Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     padding: 5vh 5vh;
+}
+
+.user-wrap {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 12px;
+    text-align: left;
+
+    .nick-name {
+        font-size: 16px;
+    }
 }
 
 .comment-wrap {
     display: flex;
     width: 100%;
-    margin: 18px 0;
+    margin: 15px 0;
 
     .info {
         width: 40px;

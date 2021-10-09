@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: '(●ˇ∀ˇ●)'
+  navigationBarTitleText: '(o゜▽゜)o☆'
 }
