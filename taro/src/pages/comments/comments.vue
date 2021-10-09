@@ -116,7 +116,7 @@ export default {
 
         const getComments = () => {
             Taro.request({
-                url: "http://localhost:8080/comment/all",
+                url: "https://korilin.com/api/20211001/comment/all",
                 success: function (res) {
                     state.comments = res.data;
                 },
@@ -130,7 +130,7 @@ export default {
                 content: state.content,
             };
             Taro.request({
-                url: "http://localhost:8080/comment/new",
+                url: "https://korilin.com/api/20211001/comment/new",
                 method: "POST",
                 data: data,
                 success: function (res) {

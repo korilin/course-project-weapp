@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.korilin"
-version = "0.0.1-SNAPSHOT"
+version = "2021-10-10"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

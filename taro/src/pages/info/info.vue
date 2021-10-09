@@ -40,13 +40,13 @@ export default {
     created() {
         var that = this;
         Taro.request({
-            url: "http://localhost:8080/kori/info",
+            url: "https://korilin.com/api/20211001/kori/info",
             success: function (res) {
                 that.info = res.data;
             },
         });
         Taro.request({
-            url: "http://localhost:8080/kori/tags",
+            url: "https://korilin.com/api/20211001/kori/tags",
             success: function (res) {
                 that.tags = res.data;
             },

@@ -26,7 +26,7 @@ export default {
     created() {
         var that = this;
         Taro.request({
-            url: "http://localhost:8080/kori/photos",
+            url: "https://korilin.com/api/20211001/kori/photos",
             success: function (res) {
                 that.photos = res.data;
             },

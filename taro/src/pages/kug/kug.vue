@@ -43,7 +43,7 @@ export default {
     created() {
         var that = this;
         Taro.request({
-            url: "http://localhost:8080/kori/seminars",
+            url: "https://korilin.com/api/20211001/kori/seminars",
             success: function (res) {
                 that.seminars = res.data;
             },
