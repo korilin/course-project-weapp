@@ -10,61 +10,53 @@
         </view>
 
         <view class="desc">
-            <nut-divider class="divider" content-position="left"
-                >个人信息</nut-divider
-            >
-            <template v-for="(v, k, i) in info" :key="i">
-                <nut-cell :title="k" :desc="v"></nut-cell>
-            </template>
+            <nut-cell-group title="个人信息">
+                <template v-for="item in info" :key="item.sort">
+                    <nut-cell :title="item.key" :desc="item.value"></nut-cell>
+                </template>
+            </nut-cell-group>
         </view>
 
         <view class="tags">
             <nut-divider class="divider" content-position="left"
                 >技术标签</nut-divider
             >
-            <template v-for="(v, i) in tags" :key="i">
+            <template v-for="item in tags" :key="item.sort">
                 <nut-tag round class="item" :color="randomTagColor()">
-                    {{ v }}
+                    {{ item.tag }}
                 </nut-tag>
             </template>
         </view>
-
     </view>
 </template>
 
 <script>
 import { reactive, toRefs } from "vue";
+import Taro from "@tarojs/taro";
 
 export default {
     name: "Info",
+
+    created() {
+        var that = this;
+        Taro.request({
+            url: "http://localhost:8080/kori/info",
+            success: function (res) {
+                that.info = res.data;
+            },
+        });
+        Taro.request({
+            url: "http://localhost:8080/kori/tags",
+            success: function (res) {
+                that.tags = res.data;
+            },
+        });
+    },
+
     setup() {
         const data = reactive({
-            info: {
-                姓名: "林洁彬 / Kori Lin",
-                学号: "201835020822_18级软工8班",
-                在校部门: "校易班学生工作站技术部部长",
-                "Personal Blog": "https://korilin.com",
-                "GitHub Link": "https://github.com/korilin",
-                Email: "korilin.dev@gmail.com",
-                微信公众号: "Tech Kori",
-                社区建设: "深圳 Kotlin User Group 组织者",
-            },
-            tags: [
-                "Java",
-                "Python",
-                "Kotlin",
-                "Android",
-                "Jetpack",
-                "Spring Boot",
-                "Ktor",
-                "MySQL",
-                "Vue 2.0",
-                "Vue 3.0",
-                "Vue CLI",
-                "Taro",
-                "Flask",
-                "Nginx",
-            ],
+            info: [],
+            tags: [],
         });
 
         const tagColor = [

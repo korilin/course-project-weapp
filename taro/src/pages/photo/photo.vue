@@ -1,48 +1,87 @@
 <template>
-    <view class="index"> photo </view>
+    <view class="photo">
+        <template v-for="photo in photos" :key="photo.url">
+            <view class="title"> {{ photo.title }} </view>
+            <nut-cell round-radius="15" @click="showPreview(photo.url)">
+                <img class="mini-img" mode="widthFix" :src="photo.url" />
+                <view class="desc">
+                    {{ photo.description }}
+                </view>
+            </nut-cell>
+        </template>
+        <nut-overlay v-model:visible="isShowPreview" :z-index="2000">
+            <view class="wrapper">
+                <img mode="widthFix" :src="previewImg" />
+            </view>
+        </nut-overlay>
+    </view>
 </template>
 
 <script>
 import { reactive, toRefs } from "vue";
+import Taro from "@tarojs/taro";
 
 export default {
     name: "Photo",
+    created() {
+        var that = this;
+        Taro.request({
+            url: "http://localhost:8080/kori/photos",
+            success: function (res) {
+                that.photos = res.data;
+            },
+        });
+    },
     setup() {
         const state = reactive({
-            msg: "欢迎来到 korilin 的小程序",
+            isShowPreview: false,
+            previewImg: "",
+            photos: [],
         });
 
-        const handleClick = (type, msg, cover = false) => {
-            state.show = true;
-            state.msg2 = msg;
-            state.type = type;
-            state.cover = cover;
+        const showPreview = (url) => {
+            state.previewImg = url;
+            state.isShowPreview = true;
         };
 
         return {
             ...toRefs(state),
-            handleClick,
+            showPreview,
         };
     },
 };
 </script>
 
 <style lang="scss">
-.index {
+.photo {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    padding: 5vh 0;
+    text-align: left;
+    padding: 2vh 8vw;
 
-    .msg {
-        margin-top: 5vh;
-        font-size: 20px;
-        font-weight: bold;
+    .mini-img {
+        width: 40vw;
+        border-radius: 15px;
     }
 
-    .btn {
+    .desc {
+        margin-left: 5vw;
+        width: 40vw;
+        font-size: 15px;
+        color: #808080;
+    }
+
+    .title {
+        font-size: 18px;
         margin-top: 5vh;
+        padding-left: 15px;
+    }
+
+    .wrapper {
+        height: 100vh;
+        display: flex;
+        align-items: center;
     }
 }
 </style>

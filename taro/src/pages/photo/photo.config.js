@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: '我的部门'
-}
+    navigationBarTitleText: "相册记录",
+};

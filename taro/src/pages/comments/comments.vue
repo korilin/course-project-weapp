@@ -1,5 +1,17 @@
 <template>
-    <view class="index"> comment </view>
+    <view class="comments">
+        <view>
+            发表你的评论:
+            <nut-textarea
+                v-if="isLogin"
+                rows="2"
+                limit-show
+                max-length="200"
+                v-model="content"
+            />
+            <nut-button v-else type="info">请先登录</nut-button>
+        </view>
+    </view>
 </template>
 
 <script>
@@ -9,7 +21,16 @@ export default {
     name: "Comments",
     setup() {
         const state = reactive({
-            msg: "欢迎来到 korilin 的小程序",
+            content: "",
+            isLogin: false,
+            comments: [
+                {
+                    nickName: "kori",
+                    avatarUrl: "https://korilin.com/korilin.png",
+                    content: "你好呀",
+                    timestamp: 1633788029,
+                },
+            ],
         });
 
         return {
@@ -20,21 +41,11 @@ export default {
 </script>
 
 <style lang="scss">
-.index {
+.comments {
     font-family: "Avenir", Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    padding: 5vh 0;
-
-    .msg {
-        margin-top: 5vh;
-        font-size: 20px;
-        font-weight: bold;
-    }
-
-    .btn {
-        margin-top: 5vh;
-    }
+    padding: 5vh 5vh;
 }
 </style>
