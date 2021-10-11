@@ -11,7 +11,7 @@
         </template>
         <nut-overlay v-model:visible="isShowPreview" :z-index="2000">
             <view class="wrapper">
-                <img mode="widthFix" :src="previewImg" />
+                <img width="100vw" mode="widthFix" :src="previewImg" />
             </view>
         </nut-overlay>
     </view>

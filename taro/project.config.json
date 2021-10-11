@@ -2,7 +2,7 @@
     "miniprogramRoot": "dist/",
     "projectname": "course-project-weapp",
     "description": "课程作业-我的城院生活-微信小程序",
-    "appid": "wx6653653ff2036c36",
+    "appid": "wxd9a6101e3ff9ca98",
     "setting": {
         "urlCheck": false,
         "es6": false,
