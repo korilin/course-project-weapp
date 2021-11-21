@@ -34,6 +34,10 @@
         <view>
             <view v-for="(comment, i) in comments" :key="comment.commentId">
                 <view class="comment-wrap">
+                    <view :class="likes.includes(comment.commentId) ? 'like is-like' : 'like'" @click="changeLike(i, !likes.includes(comment.commentId))">
+                        <nut-icon name="fabulous" />
+                        <text class="text"> {{ comment.like }}</text>
+                    </view>
                     <view class="info">
                         <nut-avatar size="40" :icon="comment.avatarUrl" />
                     </view>
@@ -59,6 +63,7 @@
 import { reactive, toRefs } from "vue";
 import Taro from "@tarojs/taro";
 import moment from "moment";
+import { baseUrl } from "../../utils";
 
 export default {
     name: "Comments",
@@ -94,6 +99,7 @@ export default {
             content: "",
             userInfo: null,
             comments: [],
+            likes: [],
             toast: {
                 show: false,
                 type: "text",
@@ -107,16 +113,22 @@ export default {
 
         const getUserInfo = () => {
             Taro.getUserProfile({
-                desc: "用于发表评论",
+                desc: "用于发表评论&点赞",
                 success: (res) => {
                     state.userInfo = res.userInfo;
+                    Taro.request({
+                        url: baseUrl + "/api/20211001/comment/myLikes?nickName=" + state.userInfo.nickName,
+                        success: function (res) {
+                            state.likes = res.data;
+                        },
+                    });
                 },
             });
         };
 
         const getComments = () => {
             Taro.request({
-                url: "https://korilin.com/api/20211001/comment/all",
+                url: baseUrl + "/api/20211001/comment/all",
                 success: function (res) {
                     state.comments = res.data;
                 },
@@ -130,7 +142,7 @@ export default {
                 content: state.content,
             };
             Taro.request({
-                url: "https://korilin.com/api/20211001/comment/new",
+                url: baseUrl + "/api/20211001/comment/new",
                 method: "POST",
                 data: data,
                 success: function (res) {
@@ -149,6 +161,35 @@ export default {
             });
         };
 
+        const changeLike = (index, newStatus) => {
+            if (state.userInfo == null) {
+                getUserInfo();
+            } else {
+                const commentId = state.comments[index].commentId;
+                Taro.request({
+                    url: baseUrl + "/api/20211001/comment/changeLike",
+                    method: "POST",
+                    data: {
+                        commentId: commentId,
+                        nickName: state.userInfo.nickName,
+                        newStatus: newStatus,
+                    },
+                    success: function (res) {
+                        if (newStatus) {
+                            state.toast.msg = "点赞成功";
+                            state.toast.type = "success";
+                            state.toast.show = true;
+                            state.comments[index].like += 1;
+                            state.likes.push(commentId);
+                        } else {
+                            state.comments[index].like -= 1;
+                            state.likes.splice(index, 1);
+                        }
+                    },
+                });
+            }
+        };
+
         return {
             ...toRefs(state),
             moment,
@@ -156,6 +197,7 @@ export default {
             getUserInfo,
             getComments,
             sendComment,
+            changeLike,
         };
     },
 };
@@ -181,6 +223,26 @@ export default {
     display: flex;
     width: 100%;
     margin: 15px 0;
+    position: relative;
+
+    .like {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #ccc;
+        font-size: 16px;
+        line-height: 40rpx;
+
+        .text {
+            position: relative;
+            margin-left: 5px;
+            top: -4px;
+        }
+    }
+
+    .is-like {
+        color: #fa2c19 !important;
+    }
 
     .info {
         width: 40px;

@@ -17,4 +17,19 @@ data class Seminar(
     val source: String
 )
 
-data class Comment(val commentId: Int, val nickName:String, val avatarUrl:String, val content: String, val timestamp: Int)
+data class Comment(
+    val commentId: Int,
+    val nickName: String,
+    val avatarUrl: String,
+    val content: String,
+    val timestamp: Int,
+    var like: Int
+) {
+    constructor (
+        commentId: Int,
+        nickName: String,
+        avatarUrl: String,
+        content: String,
+        timestamp: Int,
+    ) : this(commentId, nickName, avatarUrl, content, timestamp, 0)
+}

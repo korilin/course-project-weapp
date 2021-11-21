@@ -3,6 +3,7 @@ package com.korilin.courseprojectweappservice
 import com.korilin.courseprojectweappservice.mapper.CommentMapper
 import com.korilin.courseprojectweappservice.model.Comment
 import com.korilin.courseprojectweappservice.model.NewComment
+import com.korilin.courseprojectweappservice.model.NewLikeStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,5 +18,17 @@ class CommentController(val commentMapper: CommentMapper) {
     }
 
     @GetMapping("/all")
-    fun allComments() = commentMapper.getComments().sortedBy { -it.commentId }
+    fun allComments() = commentMapper.getComments().sortedBy { -it.commentId }.onEach {
+        val like = commentMapper.getLike(it.commentId)
+        it.like = like
+    }
+
+    @PostMapping("/changeLike")
+    fun changeLike(@RequestBody newLikeStatus: NewLikeStatus) = newLikeStatus.run {
+        if (newStatus) commentMapper.toLike(commentId, nickName)
+        else commentMapper.unLike(commentId, nickName)
+    }
+
+    @GetMapping("/myLikes")
+    fun myLikes(nickName : String) = commentMapper.myLikes(nickName)
 }

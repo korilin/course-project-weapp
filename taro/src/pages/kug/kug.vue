@@ -35,6 +35,7 @@
 <script>
 import { reactive, toRefs } from "vue";
 import Taro from "@tarojs/taro";
+import { baseUrl } from "../../utils";
 
 export default {
     name: "KUG",
@@ -42,7 +43,7 @@ export default {
     created() {
         var that = this;
         Taro.request({
-            url: "https://korilin.com/api/20211001/kori/seminars",
+            url: baseUrl + "/api/20211001/kori/seminars",
             success: function (res) {
                 that.seminars = res.data;
             },

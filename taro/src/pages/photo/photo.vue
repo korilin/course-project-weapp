@@ -20,13 +20,14 @@
 <script>
 import { reactive, toRefs } from "vue";
 import Taro from "@tarojs/taro";
+import { baseUrl } from "../../utils";
 
 export default {
     name: "Photo",
     created() {
         var that = this;
         Taro.request({
-            url: "https://korilin.com/api/20211001/kori/photos",
+            url: baseUrl + "/api/20211001/kori/photos",
             success: function (res) {
                 that.photos = res.data;
             },
