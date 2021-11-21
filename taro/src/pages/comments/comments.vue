@@ -34,7 +34,14 @@
         <view>
             <view v-for="(comment, i) in comments" :key="comment.commentId">
                 <view class="comment-wrap">
-                    <view :class="likes.includes(comment.commentId) ? 'like is-like' : 'like'" @click="changeLike(i, !likes.includes(comment.commentId))">
+                    <view
+                        :class="
+                            likes.includes(comment.commentId)
+                                ? 'like is-like'
+                                : 'like'
+                        "
+                        @click="changeLike(i)"
+                    >
                         <nut-icon name="fabulous" />
                         <text class="text"> {{ comment.like }}</text>
                     </view>
@@ -117,7 +124,10 @@ export default {
                 success: (res) => {
                     state.userInfo = res.userInfo;
                     Taro.request({
-                        url: baseUrl + "/api/20211001/comment/myLikes?nickName=" + state.userInfo.nickName,
+                        url:
+                            baseUrl +
+                            "/api/20211001/comment/myLikes?nickName=" +
+                            state.userInfo.nickName,
                         success: function (res) {
                             state.likes = res.data;
                         },
@@ -161,11 +171,12 @@ export default {
             });
         };
 
-        const changeLike = (index, newStatus) => {
+        const changeLike = (index) => {
             if (state.userInfo == null) {
                 getUserInfo();
             } else {
-                const commentId = state.comments[index].commentId;
+                const commentId = state.comments[index].commentId
+                const newStatus = !state.likes.includes(commentId);
                 Taro.request({
                     url: baseUrl + "/api/20211001/comment/changeLike",
                     method: "POST",
@@ -183,7 +194,10 @@ export default {
                             state.likes.push(commentId);
                         } else {
                             state.comments[index].like -= 1;
-                            state.likes.splice(index, 1);
+                            state.likes.splice(
+                                state.likes.indexOf(commentId),
+                                1
+                            );
                         }
                     },
                 });

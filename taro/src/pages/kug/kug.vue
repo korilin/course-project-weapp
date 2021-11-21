@@ -59,9 +59,7 @@ export default {
         const state = reactive({
             isShowWebView: false,
             webViewSrc: "",
-            groupTitle:
-                "Hi，我是 Shenzhen Kotlin User Group 的组织者 Kori，如果你对 Kotlin 有兴趣可以通过以下页面来了解我们",
-
+            groupTitle: "Hi，我是 Shenzhen Kotlin User Group 的组织者 Kori，如果你对 Kotlin 有兴趣可以通过以下页面来了解我们",
             seminars: [],
         });
 
